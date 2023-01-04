@@ -23,5 +23,10 @@ You will also need the following PyPI packages:
 5. Run `python3.10 ./src/main.py fetch_data`.
 6. Run `python3.10 ./src/main.py chart_data`.
 
+## Customization
+There are many customization options for the animated bar chart. To start customizing, open ./src/scripts/chart_data.py. Then, you can set record to False while you experiment.
+
 ## Credits
 The layout for the animated bar chart is heavily inspired by [Abacaba's Celeste speedrun history video](https://youtu.be/T_0ACLhtgnU). Additionally, the idea of using the cosine function for interpolation is also from [Abacaba's tutorial series](https://youtu.be/7srfHUXP6kM).
+
+If you upload a video using this project, please leave a link to this repository in the description.
