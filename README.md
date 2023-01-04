@@ -5,7 +5,7 @@ This repository contains utilities for creating animated bar chart world record 
 ## Setup
 To get started, you will need to install the following dependencies:
 * Python (3.10+)
-* FFMPEG (for rendering the video file)
+* FFmpeg (for rendering the video file)
 
 You will also need the following PyPI packages:
 * srcomapi
