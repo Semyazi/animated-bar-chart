@@ -29,4 +29,4 @@ There are many customization options for the animated bar chart. To start custom
 ## Credits
 The layout for the animated bar chart is heavily inspired by [Abacaba's Celeste speedrun history video](https://youtu.be/T_0ACLhtgnU). Additionally, the idea of using the cosine function for interpolation is also from [Abacaba's tutorial series](https://youtu.be/7srfHUXP6kM).
 
-If you upload a video using this project, please leave a link to this repository in the description.
+If you upload a video made using this project, please leave a link to this repository in the description.
