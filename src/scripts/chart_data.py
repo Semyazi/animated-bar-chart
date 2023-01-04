@@ -18,7 +18,7 @@ RENDERER_CONFIG = {
 	"fps": 60,
 	"crf": 18,
 	"output": "animated-bar-chart.mp4",
-	"record": False
+	"record": True
 }
 
 TIMER_CONFIG = {}
