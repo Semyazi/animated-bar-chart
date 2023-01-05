@@ -15,6 +15,7 @@ You will also need the following PyPI packages:
 * PIL (Python Imaging Library)
 * pygame
 * python-dotenv
+* colorthief
 
 ## Usage
 1. Clone this github repository and open a terminal.
