@@ -14,6 +14,7 @@ You will also need the following PyPI packages:
 * inquirer
 * PIL (Python Imaging Library)
 * pygame
+* python-dotenv
 
 ## Usage
 1. Clone this github repository and open a terminal.
