@@ -26,7 +26,7 @@ def _create_url(query):
 	query_encoded = json.dumps(query, separators=(',', ':')).encode('ascii')
 	query_encoded = base64.b64encode(query_encoded).rstrip(b"=").decode()
 
-	return f"https://www.speedrun.com/api/v2/game/getLeaderboard?_r={query_encoded}"
+	return f"https://www.speedrun.com/api/v2/GetGameLeaderboard?_r={query_encoded}"
 
 async def _get_page(game_info, page):
 	query = _create_query(game_info, page)
