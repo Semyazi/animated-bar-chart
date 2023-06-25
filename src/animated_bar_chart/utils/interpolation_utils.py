@@ -1,8 +1,6 @@
 import math
 from bisect import bisect_left, bisect_right
 
-import matplotlib.pyplot as plt
-
 
 # Antiderivative of the function f(x) = 1 - cos(2pix)
 # NOTE: This function was designed such that its integral from 0 -> 1 is 1.
