@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import uuid
 
 from animated_bar_chart.data_fetcher.country_flags.fetcher import \
     download_country_flags
@@ -13,6 +14,7 @@ from animated_bar_chart.models.Speedrun import Speedrun
 from animated_bar_chart.utils.cache_utils import ProfilePictureUrlCache
 from animated_bar_chart.utils.col_utils import get_image_col, id_to_col
 from animated_bar_chart.utils.preprocessing_utils import preprocess_comment
+from animated_bar_chart.utils.date_utils import str_to_timestamp
 
 
 class SrcPreprocessor:
@@ -59,6 +61,7 @@ class SrcPreprocessor:
 
 	def get_runners(self):
 		self.runners = {}
+		self.name_to_id = {}
 
 		for player in self.raw_data[0]["players"]:
 			src_id = player["id"]
@@ -69,6 +72,9 @@ class SrcPreprocessor:
 			country_code = country_code if len(country_code) == 2 else None
 
 			self.runners[src_id] = Runner(src_id, name, src_col, country_code)
+			self.name_to_id[name] = src_id
+
+		self.add_unsubmitted_runners()
 
 		# Get all of the speedruns
 		for page in self.raw_data:
@@ -83,8 +89,50 @@ class SrcPreprocessor:
 
 				self.runners[runner].speedruns.append(Speedrun(duration, comment, timestamp))
 
+		self.add_unsubmitted_runs()
+
 		for runner in self.runners.values():
 			runner.preprocess_speedruns()
+
+	def add_unsubmitted_runners(self):
+		path = os.environ["UNSUBMITTED_RUNNERS_PATH"]
+		if not os.path.isfile(path): return
+
+		unsubmitted_runners = json.load(open(path))
+
+		for name, data in unsubmitted_runners.items():
+			if name in self.name_to_id:
+				raise Exception("An unsubmitted runner is already in the dataset.", name)
+
+			src_id = "UNSUBMITTED-" + str(uuid.uuid1())
+			src_col = data.get("col")
+			country_code = data.get("country_code")
+
+			self.runners[src_id] = Runner(src_id, name, src_col, country_code)
+			self.name_to_id[name] = src_id
+
+	def add_unsubmitted_runs(self):
+		path = os.environ["UNSUBMITTED_RUNS_PATH"]
+		if not os.path.isfile(path): return
+
+		unsubmitted_runs = json.load(open(path))
+
+		for name, runs in unsubmitted_runs.items():
+			if name not in self.name_to_id:
+				raise Exception("Unsubmitted runs does not have a corresponding runner.")
+			
+			src_id = self.name_to_id[name]
+			runner = self.runners[src_id]
+
+			for run in runs:
+				date = run["date"]
+				duration = run["duration"]
+				comment = preprocess_comment(run.get("comment", ""))
+
+				timestamp = str_to_timestamp(date)
+
+				runner.speedruns.append(Speedrun(duration, comment, timestamp))
+
 
 	def filter_runners(self):
 		# Only keep runners that appear in the top top_ranks at least once.
@@ -101,11 +149,15 @@ class SrcPreprocessor:
 		# Filter out the runners that do not appear in the top ranks.
 		self.runners = {k:v for k,v in self.runners.items() if k in top_runner_ids}
 
+	@property
+	def src_runners(self):
+		return [src_id for src_id in self.runners.keys() if not src_id.startswith("UNSUBMITTED-")]
+
 	async def get_runners_profile_picture_urls(self):
-		await get_profile_picture_urls(self.runners.keys(), self.pfp_cache)
+		await get_profile_picture_urls(self.src_runners, self.pfp_cache)
 
 	def download_runners_profile_pictures(self):
-		download_pfps(self.runners.keys(), self.pfp_cache)
+		download_pfps(self.src_runners, self.pfp_cache)
 
 	def download_country_flags(self):
 		country_codes = set()

@@ -14,3 +14,13 @@ def datetime_utcfromtimestamp(timestamp):
 
 def datetime_to_date(dt):
 	return date(dt.year, dt.month, dt.day)
+
+def str_to_date(s, delimiter="/"):
+	y, m, d = (int(x) for x in s.split(delimiter))
+	return date(y, m, d)
+
+def date_to_timestamp(date):
+	return datetime.timestamp(date_to_datetime(date))
+
+def str_to_timestamp(s, delimiter="/"):
+	return date_to_timestamp(str_to_date(s, delimiter))
